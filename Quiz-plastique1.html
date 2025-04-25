@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Écologie - Réduction des plastiques</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
+      padding: 30px;
+      text-align: center;
+    }
+    .quiz-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: inline-block;
+      max-width: 700px;
+    }
+    h1 {
+      color: #00796b;
+    }
+    .question {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #b2dfdb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .option:hover {
+      background-color: #80cbc4;
+    }
+    #next-btn, #restart-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+    #score, #final-message {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: #004d40;
+    }
+    #final-message {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>♻️ Quiz : Réduction des plastiques</h1>
+  <div class="quiz-box">
+    <div id="question-container">
+      <div class="question" id="question">Chargement...</div>
+      <div id="options"></div>
+      <button id="next-btn">Question suivante</button>
+      <button id="restart-btn">🔁 Rejouer le quiz</button>
+    </div>
+    <div id="score"></div>
+    <div id="final-message"></div>
+  </div>
+
+  <script>
+    const quiz = [
+      {
+        question: "Quel est l’un des principaux dangers du plastique pour la faune marine ?",
+        options: ["Il se transforme en poisson", "Il pollue l'air", "Les animaux l'ingèrent", "Il attire les prédateurs"],
+        answer: "Les animaux l'ingèrent"
+      },
+      {
+        question: "Quelle est une solution simple pour réduire les déchets plastiques ?",
+        options: ["Acheter plus de plastique", "Utiliser des bouteilles jetables", "Utiliser une gourde réutilisable", "Brûler les plastiques"],
+        answer: "Utiliser une gourde réutilisable"
+      },
+      {
+        question: "Quel continent produit le plus de plastique par habitant ?",
+        options: ["Europe", "Afrique", "Amérique du Sud", "Amérique du Nord"],
+        answer: "Amérique du Nord"
+      },
+      {
+        question: "Combien de tonnes de plastique finissent chaque année dans les océans ?",
+        options: ["8 millions", "80 mille", "800 mille", "800 millions"],
+        answer: "8 millions"
+      },
+      {
+        question: "Qu'est-ce qu’un microplastique ?",
+        options: ["Un petit robot", "Une particule de plastique < 5 mm", "Un insecte", "Une molécule de pétrole"],
+        answer: "Une particule de plastique < 5 mm"
+      },
+      {
+        question: "Quel produit est une source courante de microplastiques ?",
+        options: ["Savon naturel", "Dentifrice maison", "Gommages exfoliants industriels", "Bicarbonate de soude"],
+        answer: "Gommages exfoliants industriels"
+      },
+      {
+        question: "Quel objet en plastique est le plus souvent retrouvé sur les plages ?",
+        options: ["Téléphones", "Bouteilles", "Chaussures", "Couverts"],
+        answer: "Bouteilles"
+      },
+      {
+        question: "Quel est le bon comportement avec les sacs plastiques ?",
+        options: ["Les réutiliser", "Les jeter dans la nature", "Les brûler", "Les utiliser qu’une fois"],
+        answer: "Les réutiliser"
+      },
+      {
+        question: "Pourquoi éviter les plastiques à usage unique ?",
+        options: ["Ils sont bon marché", "Ils sont biodégradables", "Ils sont souvent recyclés", "Ils génèrent plus de pollution"],
+        answer: "Ils génèrent plus de pollution"
+      },
+      {
+        question: "Quel est le but d’une campagne de sensibilisation ?",
+        options: ["Faire peur", "Changer les habitudes", "Vendre du plastique", "Désinformer les gens"],
+        answer: "Changer les habitudes"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const scoreEl = document.getElementById("score");
+    const finalMessage = document.getElementById("final-message");
+
+    function showQuestion() {
+      const q = quiz[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option);
+        optionsEl.appendChild(btn);
+      });
+      nextBtn.style.display = "none";
+    }
+
+    function checkAnswer(selected) {
+      const correct = quiz[currentQuestion].answer;
+      const options = document.querySelectorAll(".option");
+      options.forEach(opt => {
+        opt.style.pointerEvents = "none";
+        if (opt.textContent === correct) {
+          opt.style.backgroundColor = "#a5d6a7";
+        } else if (opt.textContent === selected) {
+          opt.style.backgroundColor = "#ef9a9a";
+        }
+      });
+      if (selected === correct) {
+        score++;
+      }
+      updateScore();
+      nextBtn.style.display = "inline-block";
+    }
+
+    function updateScore() {
+      scoreEl.innerHTML = `✅ Score actuel : ${score} / ${quiz.length}`;
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quiz.length) {
+        showQuestion();
+      } else {
+        showFinalResult();
+      }
+    }
+
+    function showFinalResult() {
+      questionEl.style.display = "none";
+      optionsEl.style.display = "none";
+      nextBtn.style.display = "none";
+      let appreciation = "";
+      const percentage = (score / quiz.length) * 100;
+
+      if (percentage === 100) {
+        appreciation = "🌟 Parfait ! Tu es un expert anti-plastique !";
+      } else if (percentage >= 80) {
+        appreciation = "👍 Très bien ! Continue ainsi pour protéger la planète.";
+      } else if (percentage >= 50) {
+        appreciation = "🙂 Pas mal, mais tu peux faire mieux !";
+      } else {
+        appreciation = "😕 Il est temps d’en apprendre plus sur l’écologie.";
+      }
+
+      scoreEl.innerHTML = `✅ Score final : ${score} / ${quiz.length}`;
+      finalMessage.textContent = appreciation;
+      restartBtn.style.display = "inline-block";
+    }
+
+    restartBtn.onclick = () => {
+      currentQuestion = 0;
+      score = 0;
+      questionEl.style.display = "block";
+      optionsEl.style.display = "block";
+      finalMessage.textContent = "";
+      scoreEl.textContent = "";
+      restartBtn.style.display = "none";
+      showQuestion();
+    };
+
+    showQuestion();
+  </script>
+</body>
+</html>
